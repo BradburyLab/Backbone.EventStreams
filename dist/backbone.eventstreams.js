@@ -3,6 +3,7 @@
     __slice = [].slice;
 
   init = function(Bacon, Backbone) {
+    var ReactiveView, _undelegate;
     Backbone.EventStream = {
       listenToEventStream: function(eventTarget, eventName, eventTransformer) {
         var listener;
@@ -68,7 +69,40 @@
         return model;
       }
     };
-    return _.extend(Bacon.Property.prototype, Backbone.BaconProperty);
+    _.extend(Bacon.Property.prototype, Backbone.BaconProperty);
+    (function(proto) {
+      return proto.matches = proto.matchesSelector = proto.matches || proto.matchesSelector || proto.webkitMatchesSelector || proto.mozMatchesSelector || proto.msMatchesSelector || proto.oMatchesSelector || function(selector) {
+        var i, nodes;
+        nodes = (this.parentNode || this.document).querySelectorAll(selector);
+        i = -1;
+        while (nodes[++i] && nodes[i] !== this) {}
+        return !!nodes[i];
+      };
+    })(Element.prototype);
+    _undelegate = Backbone.View.prototype.undelegateEvents;
+    ReactiveView = {
+      onEvent: function(eventName, selector, eventTransformer) {
+        var stream, _ref;
+        if ((_ref = this.bus) == null) {
+          this.bus = new Bacon.Bus();
+        }
+        stream = this.$el.asEventStream(eventName, selector, eventTransformer);
+        this.bus.plug(stream);
+        return this.bus.filter(function(x) {
+          return x instanceof $.Event && x.type === eventName && (!(selector != null) || x.currentTarget.matches(selector));
+        });
+      },
+      undelegateEvents: function() {
+        var args, _ref;
+        args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+        _undelegate.apply(this, args);
+        if ((_ref = this.bus) != null) {
+          _ref.end();
+        }
+        return this;
+      }
+    };
+    return _.extend(Backbone.View.prototype, ReactiveView);
   };
 
   if (typeof module !== "undefined" && module !== null) {

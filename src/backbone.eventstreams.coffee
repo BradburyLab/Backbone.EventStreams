@@ -42,6 +42,43 @@ init = (Bacon, Backbone) ->
 
   _.extend Bacon.Property.prototype,      Backbone.BaconProperty
 
+
+  ((proto) ->
+    proto.matches = proto.matchesSelector = proto.matches ||
+    proto.matchesSelector ||
+    proto.webkitMatchesSelector ||
+    proto.mozMatchesSelector ||
+    proto.msMatchesSelector ||
+    proto.oMatchesSelector ||
+    (selector) ->
+      nodes = (@parentNode || @document).querySelectorAll(selector)
+      i = -1
+      while (nodes[++i] && nodes[i] isnt @) then
+      !!nodes[i]
+  )(Element::)
+
+
+  _undelegate = Backbone.View::undelegateEvents
+
+  ReactiveView =
+    onEvent: (eventName, selector, eventTransformer) ->
+      @bus ?= new Bacon.Bus()
+      stream = @$el.asEventStream(eventName, selector, eventTransformer)
+      @bus.plug stream
+      @bus.filter (x) -> 
+        x instanceof $.Event &&
+        x.type is eventName &&
+        (!selector? || x.currentTarget.matches(selector))
+
+    undelegateEvents: (args...) ->
+      _undelegate.apply(@, args)
+      @bus?.end()
+      @  
+
+  _.extend Backbone.View.prototype, ReactiveView
+
+
+
 if module?
   Bacon = require("baconjs")
   Backbone = require("backbone")
