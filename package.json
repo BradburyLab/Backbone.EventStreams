@@ -1,7 +1,7 @@
 {
   "name": "Backbone.EventStreams",
   "version": "0.1.0",
-  "main": "dist/bacbone.eventstreams.js",
+  "main": "dist/backbone.eventstreams.js",
   "description": "Backbone events as Bacon.js EventStreams",
   "homepage": "https://github.com/pyykkis/Backbone.EventStreams",
   "repository": {
