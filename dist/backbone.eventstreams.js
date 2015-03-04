@@ -102,7 +102,8 @@
         return this;
       }
     };
-    return _.extend(Backbone.View.prototype, ReactiveView);
+    _.extend(Backbone.View.prototype, ReactiveView);
+    return Backbone;
   };
 
   if (typeof module !== "undefined" && module !== null) {

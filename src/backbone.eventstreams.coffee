@@ -41,8 +41,7 @@ init = (Bacon, Backbone) ->
         
 
   _.extend Bacon.Property.prototype,      Backbone.BaconProperty
-
-
+  
   ((proto) ->
     proto.matches = proto.matchesSelector = proto.matches ||
     proto.matchesSelector ||
@@ -76,8 +75,7 @@ init = (Bacon, Backbone) ->
       @  
 
   _.extend Backbone.View.prototype, ReactiveView
-
-
+  Backbone
 
 if module?
   Bacon = require("baconjs")
