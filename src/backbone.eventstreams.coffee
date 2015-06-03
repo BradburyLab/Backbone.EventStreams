@@ -2,7 +2,7 @@ init = (Bacon, Backbone) ->
   Backbone.EventStream =
     listenToEventStream: (eventTarget, eventName, eventTransformer = _.identity) ->
       listener = this
-      Bacon.fromBinder (sink) ->
+      new Bacon.fromBinder (sink) ->
         handler = (args...) ->
           reply = sink(new Bacon.Next(eventTransformer args...))
           if reply == Bacon.noMore

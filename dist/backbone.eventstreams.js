@@ -11,7 +11,7 @@
           eventTransformer = _.identity;
         }
         listener = this;
-        return Bacon.fromBinder(function(sink) {
+        return new Bacon.fromBinder(function(sink) {
           var handler, unbind;
           handler = function() {
             var args, reply;
